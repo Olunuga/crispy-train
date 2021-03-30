@@ -26,7 +26,7 @@ class RemoteFeedLoaderTest : XCTestCase {
         let (sut, client) = MakeSUT(url: tUrl)
     
         //act
-        sut.load()
+        sut.load{_ in }
         
         //assert
         XCTAssertEqual(client.requestedUrls, [tUrl])
@@ -38,8 +38,8 @@ class RemoteFeedLoaderTest : XCTestCase {
         let (sut, client) = MakeSUT(url: tUrl)
     
         //act
-        sut.load()
-        sut.load()
+        sut.load{_ in }
+        sut.load{_ in }
         
         //assert
         XCTAssertEqual(client.requestedUrls, [tUrl, tUrl])
