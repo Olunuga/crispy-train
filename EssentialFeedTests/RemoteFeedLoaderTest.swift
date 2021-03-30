@@ -92,7 +92,7 @@ class RemoteFeedLoaderTest : XCTestCase {
     }
     
     
-    typealias completionType = (Error?, HTTPURLResponse?)->Void
+    typealias completionType = (HttpClientResult)->Void
     class HTTPClientSpy : HttpClient {
         private var messages = [(url : URL, completion : completionType)]()
         var requestedUrls : [URL] {
@@ -104,11 +104,12 @@ class RemoteFeedLoaderTest : XCTestCase {
         }
         
         func complete(with error : Error, index : Int = 0){
-            messages[index].completion(error, nil)
+            messages[index].completion(.failure(error))
         }
         
         func complete(withStatusCode code : Int,at index : Int = 0){
-            messages[index].completion(nil, HTTPURLResponse(url: requestedUrls[index], statusCode: code, httpVersion: nil, headerFields: nil))
+            let result = HTTPURLResponse(url: requestedUrls[index], statusCode: code, httpVersion: nil, headerFields: nil)!
+            messages[index].completion(.success(result))
         }
         
     }
