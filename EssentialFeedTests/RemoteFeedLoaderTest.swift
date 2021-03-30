@@ -55,11 +55,9 @@ class RemoteFeedLoaderTest : XCTestCase {
     }
     
     class HTTPClientSpy : HttpClient {
-        var requestedUrl : URL?
         var requestedUrls = [URL]()
         
         func get(from url: URL) {
-            self.requestedUrl = url
             self.requestedUrls.append(url)
         }
     }
