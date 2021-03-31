@@ -102,7 +102,7 @@ class RemoteFeedLoaderTest : XCTestCase {
         
         let item2 = makeItem(id: UUID(), description: "a-description", location: "a-location", imageURL:  URL(string: "http://a-url.com")!)
         
-      
+        
         let items = [item1.model, item2.model]
         
         expect(sut, toCompleteWithResult: .success(items), when: {
@@ -114,10 +114,19 @@ class RemoteFeedLoaderTest : XCTestCase {
     
     
     //Mark: Helpers
-   private func MakeSUT(url : URL = URL(string: "some-given-url")!)->(sut : RemoteFeedLoader, client : HTTPClientSpy){
+    private func MakeSUT(url : URL = URL(string: "some-given-url")!, file : StaticString =  #filePath, line : UInt = #line)->(sut : RemoteFeedLoader, client : HTTPClientSpy){
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
+        trackForMemoryLeak(instance: sut, file: file, line: line)
+        trackForMemoryLeak(instance: client, file: file, line: line)
         return (sut, client)
+    }
+    
+    
+    private func trackForMemoryLeak(instance : AnyObject, file : StaticString , line : UInt){
+        addTeardownBlock { [weak instance] in
+            XCTAssertNil(instance, "Instance should have been de-allocated. Potential memory leak", file: file, line: line)
+        }
     }
     
     private func makeItem(id : UUID, description : String?, location : String?, imageURL : URL)-> (model : FeedItem, json : [String : Any]) {
@@ -139,7 +148,7 @@ class RemoteFeedLoaderTest : XCTestCase {
     }
     
     
-   private func expect(_ sut : RemoteFeedLoader, toCompleteWithResult  result: RemoteFeedLoader.Result, when action : () -> Void, file : StaticString = #filePath, line : UInt = #line ) {
+    private func expect(_ sut : RemoteFeedLoader, toCompleteWithResult  result: RemoteFeedLoader.Result, when action : () -> Void, file : StaticString = #filePath, line : UInt = #line ) {
         //act
         var capturedResults = [RemoteFeedLoader.Result]()
         sut.load {capturedResults.append($0) }
