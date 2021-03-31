@@ -92,8 +92,8 @@
 		0A62299026129B6F00A6915B /* EssentialFeedTests */ = {
 			isa = PBXGroup;
 			children = (
-				0A62299326129B6F00A6915B /* Info.plist */,
 				0A74F2FB26144D28009B6555 /* Feed Api */,
+				0A62299326129B6F00A6915B /* Info.plist */,
 			);
 			path = EssentialFeedTests;
 			sourceTree = "<group>";
