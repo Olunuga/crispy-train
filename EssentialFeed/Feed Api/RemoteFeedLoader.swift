@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class RemoteFeedLoader {
+public final class RemoteFeedLoader : FeedLoader {
     private let client : HttpClient
     private let url : URL
     public enum Error : Swift.Error {
