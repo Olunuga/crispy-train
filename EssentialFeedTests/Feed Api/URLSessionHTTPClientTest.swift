@@ -16,7 +16,7 @@ class URLSessionHTTPClient {
     }
     
     func get(from url : URL){
-        session.dataTask(with: url, completionHandler: {_, _ , _  in })
+        session.dataTask(with: url, completionHandler: {_, _ , _  in }).resume()
     }
 }
 
@@ -26,32 +26,61 @@ class URLSessionHTTPClientTest : XCTestCase {
     func test_get_fromURL_createsDataTaskWithURL(){
         let url = URL(string: "http:any-url.com")!
         let session = URLSessionSpy()
-      
+    
         let sut = URLSessionHTTPClient(session: session)
         sut.get(from: url)
         
         XCTAssertEqual(session.receivedUrls, [url])
     }
     
+    func test_get_fromURL_resumesDataTaskWithURL(){
+        //arrange
+        let url = URL(string: "http:any-url.com")!
+        let session = URLSessionSpy()
+        let task = URLSessionDataTaskSpy()
+        session.stub(url: url, task: task)
+        
+        //act
+        let sut = URLSessionHTTPClient(session: session)
+        sut.get(from: url)
+        
+        //assert
+        XCTAssertEqual(task.resumeCallCount,1)
+    }
     
     
     
     
     
-    //MAKRL - Helpers
+    
+    //MARK: - Helpers
     private class URLSessionSpy : URLSession {
         var receivedUrls = [URL]()
+        private var stubs = [URL : URLSessionDataTask]()
         
         override init() {}
         
+        func stub(url : URL, task : URLSessionDataTask){
+            stubs[url] = task
+        }
+        
         override func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
             receivedUrls.append(url)
-            return FakeURLSessionDataTask()
+            return stubs[url] ??  FakeURLSessionDataTask()
         }
     }
     
     
     private class FakeURLSessionDataTask : URLSessionDataTask {
         override init() {}
+    }
+    
+    private class URLSessionDataTaskSpy : URLSessionDataTask {
+        override init() {}
+        var resumeCallCount = 0
+        
+        override func resume() {
+            resumeCallCount += 1
+        }
     }
 }
