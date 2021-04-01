@@ -19,10 +19,14 @@ class URLSessionHTTPClient {
     struct UnexpectedValueRepresentation : Error {}
     
     func get(from url : URL, completion :@escaping (HttpClientResult)->Void){
-        session.dataTask(with: url, completionHandler: {_, _ , error  in
+        session.dataTask(with: url, completionHandler: {data, response , error  in
+            
             if let error = error {
                 completion(.failure(error))
-            }else{
+            }else if let data = data, data.count > 0,  let response = response as?HTTPURLResponse {
+                completion(.success(data, response))
+            }
+            else{
                 completion(.failure(UnexpectedValueRepresentation()))
             }
             
@@ -79,6 +83,32 @@ class URLSessionHTTPClientTest : XCTestCase {
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nonHttpURLResponse(), error: anyNSError()))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: anyHTTPURLResponse(), error: anyNSError()))
         XCTAssertNotNil(resultErrorFor(data: anyData(), response: nonHttpURLResponse(), error: nil))
+    }
+    
+    
+    func test_get_FromURl_succeedsOnHTTPURLResponseWithData() {
+        
+        let passedData = anyData()
+        let response = anyHTTPURLResponse()
+        URLProtocolStub.stub(data: passedData, response: response, error: nil)
+        
+        let exp = expectation(description: "Wait to get request")
+        makeSUT().get(from: anyURL()){
+            result in
+            
+            switch result {
+            case let .success(receivedData, receivedResponse):
+                XCTAssertEqual(receivedData, passedData)
+                XCTAssertEqual(receivedResponse.url, response.url)
+                XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
+            default:
+               XCTFail("Expect success, but got \(result)")
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        
     }
     
     
