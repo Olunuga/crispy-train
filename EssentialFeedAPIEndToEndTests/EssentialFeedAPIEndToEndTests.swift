@@ -10,6 +10,31 @@ import EssentialFeed
 
 class EssentialFeedAPIEndToEndTests: XCTestCase {
     func test_endToEndTestServerGETFeedResult_matchesTestAccountData() {
+        switch getFeedResult() {
+        case let .success(feedItems)?:
+            XCTAssertEqual(feedItems.count, 8, "Expected 8 items in the test account feed")
+            XCTAssertEqual(feedItems[0], expectedItem(at : 0))
+            XCTAssertEqual(feedItems[1], expectedItem(at : 1))
+            XCTAssertEqual(feedItems[2], expectedItem(at : 2))
+            XCTAssertEqual(feedItems[3], expectedItem(at : 3))
+            XCTAssertEqual(feedItems[4], expectedItem(at : 4))
+            XCTAssertEqual(feedItems[5], expectedItem(at : 5))
+            XCTAssertEqual(feedItems[6], expectedItem(at : 6))
+            XCTAssertEqual(feedItems[7], expectedItem(at : 7))
+            
+        case let .failure(error)?:
+            XCTFail("Expected successful feed result, but got \(error)")
+        default:
+            XCTFail("Expected successful feed result, but got nil instead")
+        }
+        
+    }
+    
+    
+    //MARK: Helper
+    
+    
+    func getFeedResult()-> LoadFeedResult? {
         let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
         let client = URLSessionHTTPClient()
         let feedLoader = RemoteFeedLoader(url: testServerURL, client: client)
@@ -21,29 +46,8 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 5.0)
-        
-        switch receivedResult {
-        case let .success(feedItems):
-            XCTAssertEqual(feedItems.count, 8, "Expected 8 items in the test account feed")
-            XCTAssertEqual(feedItems[0], expectedItem(at : 0))
-            XCTAssertEqual(feedItems[1], expectedItem(at : 1))
-            XCTAssertEqual(feedItems[2], expectedItem(at : 2))
-            XCTAssertEqual(feedItems[3], expectedItem(at : 3))
-            XCTAssertEqual(feedItems[4], expectedItem(at : 4))
-            XCTAssertEqual(feedItems[5], expectedItem(at : 5))
-            XCTAssertEqual(feedItems[6], expectedItem(at : 6))
-            XCTAssertEqual(feedItems[7], expectedItem(at : 7))
-            
-        case let .failure(error):
-            XCTFail("Expected successful feed result, but got \(error)")
-        default:
-            XCTFail("Expected successful feed result, but got nil instead")
-        }
-        
+        return receivedResult
     }
-    
-    
-    //MARK: Helper
     
     func expectedItem(at index : Int) -> FeedItem{
         return FeedItem(id: id(at: index), description: description(at: index), location: location(at: index), imageUrl: imageURL(at: index))
