@@ -38,7 +38,7 @@ class URLSessionHTTPClientTest : XCTestCase {
     func test_get_fromURL_failsOnRequestError(){
         let requestError = anyNSError()
         let receivedError = resultErrorFor(data : nil, response : nil, error: requestError)
-        XCTAssertEqual(receivedError as NSError?, requestError)
+        compareError(receivedError: receivedError as NSError?, expectedError: requestError)
     }
     
     
@@ -94,6 +94,17 @@ class URLSessionHTTPClientTest : XCTestCase {
         let sut = URLSessionHTTPClient()
         trackForMemoryLeak(instance:sut , file: file, line: line)
         return sut
+    }
+    
+    
+    private func compareError(receivedError : NSError?, expectedError : NSError, file : StaticString  = #filePath, line : UInt = #line){
+        guard let receivedError = receivedError else {
+            XCTFail("Expected error got nil instead",file: file, line: line)
+            return
+        }
+        
+        XCTAssertEqual(receivedError.domain, expectedError.domain, file: file, line: line)
+        XCTAssertEqual(receivedError.code, expectedError.code, file: file, line: line)
     }
     
     private func anyURL() -> URL {URL(string: "http://any-url.com")!}
