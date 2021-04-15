@@ -112,43 +112,21 @@ class CacheFeedUseCaseTests : XCTestCase {
     
     func test_save_failsOnDeletionError(){
         let (sut, store) = makeSUT()
-        let items = [uniqueItem(), uniqueItem()]
         let deletionError = anyNSError()
         
-        
-        let exp = expectation(description: "Wait for completion")
-        var receivedError : Error?
-        
-        sut.save(items){ error in
-            receivedError = error
-            exp.fulfill()
-        }
-        store.completeDeletionWith(with: deletionError)
-        
-        wait(for: [exp], timeout: 1.0)
-       
-        XCTAssertEqual(receivedError as NSError?, deletionError)
+        expect(sut, toCompleteWith: deletionError, when: {
+            store.completeDeletionWith(with: deletionError)
+        })
     }
     
     func test_save_failsOnInsertionError(){
         let (sut, store) = makeSUT()
-        let items = [uniqueItem(), uniqueItem()]
         let insertionError = anyNSError()
-        
-        
-        let exp = expectation(description: "Wait for save")
-        var receivedError : Error?
-        
-        sut.save(items){ error in
-            receivedError = error
-            exp.fulfill()
-        }
-        store.completeDeletionSuccessfully()
-        store.completeInsertionWith(with: insertionError)
-        
-        wait(for: [exp], timeout: 1.0)
-       
-        XCTAssertEqual(receivedError as NSError?, insertionError)
+    
+        expect(sut, toCompleteWith: insertionError, when: {
+            store.completeDeletionSuccessfully()
+            store.completeInsertionWith(with: insertionError)
+        })
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion(){
@@ -177,6 +155,20 @@ class CacheFeedUseCaseTests : XCTestCase {
         trackForMemoryLeak(sut, file: file, line:  line)
         trackForMemoryLeak(store, file: file, line: line)
         return (sut, store)
+    }
+    
+    
+    func expect(_ sut : LocalFeedLoader, toCompleteWith expectedError : NSError?, when action : ()->(), file: StaticString = #filePath, line: UInt = #line) {
+        let exp = expectation(description: "Wait for action")
+        var receivedError : Error?
+        
+        sut.save([uniqueItem()]){ error in
+            receivedError = error
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(receivedError as NSError?, expectedError)
     }
     
     private func uniqueItem()-> FeedItem {
