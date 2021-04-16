@@ -137,8 +137,8 @@ class LoadFeedFromRemoteUseCaseTests : XCTestCase {
     private func MakeSUT(url : URL = URL(string: "some-given-url")!, file : StaticString =  #filePath, line : UInt = #line)->(sut : RemoteFeedLoader, client : HTTPClientSpy){
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
-        trackForMemoryLeak(instance: sut, file: file, line: line)
-        trackForMemoryLeak(instance: client, file: file, line: line)
+        trackForMemoryLeak(sut, file: file, line: line)
+        trackForMemoryLeak(client, file: file, line: line)
         return (sut, client)
     }
     
@@ -148,8 +148,8 @@ class LoadFeedFromRemoteUseCaseTests : XCTestCase {
     }
     
     
-    private func makeItem(id : UUID, description : String?, location : String?, imageURL : URL)-> (model : FeedItem, json : [String : Any]) {
-        let item = FeedItem(id: id, description: description, location: location, imageUrl: imageURL)
+    private func makeItem(id : UUID, description : String?, location : String?, imageURL : URL)-> (model : FeedImage, json : [String : Any]) {
+        let item = FeedImage(id: id, description: description, location: location, imageUrl: imageURL)
         let json = [
             "id": id.uuidString,
             "description" : description,
