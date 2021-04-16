@@ -38,8 +38,8 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
         let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
         let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         let feedLoader = RemoteFeedLoader(url: testServerURL, client: client)
-        trackForMemoryLeak(instance: client, file: file, line: line)
-        trackForMemoryLeak(instance: feedLoader, file: file, line: line)
+        trackForMemoryLeak( client, file: file, line: line)
+        trackForMemoryLeak( feedLoader, file: file, line: line)
         
         let exp = expectation(description: "Wait for network call")
         var receivedResult : LoadFeedResult?
@@ -51,8 +51,8 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
         return receivedResult
     }
     
-    func expectedItem(at index : Int) -> FeedItem{
-        return FeedItem(id: id(at: index), description: description(at: index), location: location(at: index), imageUrl: imageURL(at: index))
+    func expectedItem(at index : Int) -> FeedImage{
+        return FeedImage(id: id(at: index), description: description(at: index), location: location(at: index), imageUrl: imageURL(at: index))
     }
     
     private func id(at index: Int) -> UUID {
