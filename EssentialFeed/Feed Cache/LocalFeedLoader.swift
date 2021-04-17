@@ -12,15 +12,15 @@ public final class LocalFeedLoader{
     private let currentDate : ()->Date
     let calendar = Calendar(identifier: .gregorian)
     
-   public typealias SaveResult = Error?
-   
+    public typealias SaveResult = Error?
     
-   public init(store : FeedStore, currentDate : @escaping ()->Date) {
+    
+    public init(store : FeedStore, currentDate : @escaping ()->Date) {
         self.store = store
         self.currentDate = currentDate
     }
     
-   public func save(_ items : [FeedImage], completion : @escaping (SaveResult)->Void){
+    public func save(_ items : [FeedImage], completion : @escaping (SaveResult)->Void){
         store.deleteCachedFeed{ [weak self] error in
             guard let self = self else {return }
             
@@ -42,7 +42,6 @@ public final class LocalFeedLoader{
             case let .found(feed, timeStamp) where self.validate(timeStamp):
                 completion(.success(feed.toModels()))
             case .found:
-                self.store.deleteCachedFeed{_ in }
                 completion(.success([]))
             case .empty:
                 completion(.success([]))
@@ -55,15 +54,17 @@ public final class LocalFeedLoader{
             switch result {
             case .failure:
                 self.store.deleteCachedFeed{_ in }
-            default:
+            case let .found(_, timeStamp) where !validate(timeStamp):
+                self.store.deleteCachedFeed{_ in }
+            case .empty, .found:
                 break
             }
         }
         
     }
     
-   private func cache(_ items : [FeedImage], with completion : @escaping (SaveResult)-> Void) {
-    store.insert(items.toLocal(), timeStamp: currentDate()){[weak self] error in
+    private func cache(_ items : [FeedImage], with completion : @escaping (SaveResult)-> Void) {
+        store.insert(items.toLocal(), timeStamp: currentDate()){[weak self] error in
             guard self != nil else {return}
             completion(error)
         }
