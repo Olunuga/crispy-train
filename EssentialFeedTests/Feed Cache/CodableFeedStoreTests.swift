@@ -10,6 +10,10 @@ import EssentialFeed
 
 
 class CodableFeedStore {
+    private let storeURL : URL
+    init(storeURL : URL) {
+        self.storeURL = storeURL
+    }
     
     private struct Cache : Codable {
         let feed : [CodableFeedImage]
@@ -34,12 +38,10 @@ class CodableFeedStore {
         }
         
         var local : LocalFeedImage {
-             LocalFeedImage(id: id, description: description, location: location, url: url)
+            LocalFeedImage(id: id, description: description, location: location, url: url)
         }
     }
     
-    
-    private let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("image-feed.store")
     
     func retrieve(completion : @escaping FeedStore.RetrievalCompletion){
         guard let data = try? Data(contentsOf: storeURL) else {
@@ -52,7 +54,7 @@ class CodableFeedStore {
         completion(.found(feed: cache.localFeed, timeStamp: cache.timeStamp))
     }
     
-   
+    
     
     func insert(_ items : [LocalFeedImage], timeStamp : Date, completion : @escaping FeedStore.InsertionCompletion){
         let encoder = JSONEncoder()
@@ -65,7 +67,7 @@ class CodableFeedStore {
 
 class CodableFeedStoreTests : XCTestCase {
     
-
+    
     override class func setUp() {
         super.setUp()
         let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("image-feed.store")
@@ -102,13 +104,13 @@ class CodableFeedStoreTests : XCTestCase {
         let exp = expectation(description: "Wait for retrieve to complete")
         sut.retrieve { firstResult in
             sut.retrieve { secondResult in
-            switch (firstResult, secondResult) {
-            case (.empty, .empty):
-                break
-            default:
-                XCTFail("Expected empty result in both cases, but got \(firstResult) and \(secondResult) instead")
-            }
-            
+                switch (firstResult, secondResult) {
+                case (.empty, .empty):
+                    break
+                default:
+                    XCTFail("Expected empty result in both cases, but got \(firstResult) and \(secondResult) instead")
+                }
+                
                 exp.fulfill()
                 
             }
@@ -126,17 +128,15 @@ class CodableFeedStoreTests : XCTestCase {
         sut.insert(feeds, timeStamp: timeStamp){ insertionError in
             XCTAssertNil(insertionError, "Expect insertion error to be nil")
             sut.retrieve { retrievedResult in
-            switch retrievedResult {
-            case  let .found(localFeeds, retrievedTimeStamp):
-            XCTAssertEqual(localFeeds, feeds)
-            XCTAssertEqual(timeStamp, retrievedTimeStamp)
-                break
-            default:
-                XCTFail("Expected found result with \(feeds) and \(timeStamp), but got \(retrievedResult) instead")
-            }
-            
+                switch retrievedResult {
+                case  let .found(localFeeds, retrievedTimeStamp):
+                    XCTAssertEqual(localFeeds, feeds)
+                    XCTAssertEqual(timeStamp, retrievedTimeStamp)
+                    break
+                default:
+                    XCTFail("Expected found result with \(feeds) and \(timeStamp), but got \(retrievedResult) instead")
+                }
                 exp.fulfill()
-                
             }
         }
         
@@ -147,7 +147,8 @@ class CodableFeedStoreTests : XCTestCase {
     
     //MARK: HELPER
     func makeSUT(file: StaticString = #filePath, line: UInt = #line)-> CodableFeedStore {
-        let sut = CodableFeedStore()
+        let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("image-feed.store")
+        let sut = CodableFeedStore(storeURL: storeURL)
         trackForMemoryLeak(sut, file: file, line: line)
         return sut
     }
