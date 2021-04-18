@@ -48,7 +48,7 @@ class LoadFeedFromCacheUseCaseTests : XCTestCase {
         let (sut, store) = makeSUT(currentDate: {fixedCurrentDate})
         let feed = uniqueImageFeed()
         
-        let lessThanSevenDaysOldTimeStamp = fixedCurrentDate.adding(days : -7).adding(seconds :  1)
+        let lessThanSevenDaysOldTimeStamp = fixedCurrentDate.minusFeedCacheMaxAge().adding(seconds :  1)
         
         expect(sut, toCompleteWith: .success(feed.model), when: {
             store.completeRetrieval(with: feed.local, timeStamp : lessThanSevenDaysOldTimeStamp)
@@ -61,7 +61,7 @@ class LoadFeedFromCacheUseCaseTests : XCTestCase {
         let (sut, store) = makeSUT(currentDate: {fixedCurrentDate})
         let feed = uniqueImageFeed()
         
-        let lessThanSevenDaysOldTimeStamp = fixedCurrentDate.adding(days : -7)
+        let lessThanSevenDaysOldTimeStamp = fixedCurrentDate.minusFeedCacheMaxAge()
         
         expect(sut, toCompleteWith: .success([]), when: {
             store.completeRetrieval(with: feed.local, timeStamp : lessThanSevenDaysOldTimeStamp)
@@ -74,7 +74,7 @@ class LoadFeedFromCacheUseCaseTests : XCTestCase {
         let (sut, store) = makeSUT(currentDate: {fixedCurrentDate})
         let feed = uniqueImageFeed()
         
-        let moreThanSevenDaysOldTimeStamp = fixedCurrentDate.adding(days : -7).adding(days: -1)
+        let moreThanSevenDaysOldTimeStamp = fixedCurrentDate.minusFeedCacheMaxAge().adding(seconds: -1)
         
         expect(sut, toCompleteWith: .success([]), when: {
             store.completeRetrieval(with: feed.local, timeStamp : moreThanSevenDaysOldTimeStamp)
@@ -103,7 +103,7 @@ class LoadFeedFromCacheUseCaseTests : XCTestCase {
     
     func test_load_hasNoSideEffectOnNonExpiredCache(){
         let feed = uniqueImageFeed()
-        let nonExpiredTimeStamp = Date().minusFeedCacheMaxAge().adding(days: 1)
+        let nonExpiredTimeStamp = Date().minusFeedCacheMaxAge().adding(seconds: 1)
         let fixedCurrentDate = Date()
 
         let (sut, store) = makeSUT(currentDate: {fixedCurrentDate})
@@ -129,7 +129,7 @@ class LoadFeedFromCacheUseCaseTests : XCTestCase {
     
     func test_load_hasNoSideEffectOnExpiredCache(){
         let feed = uniqueImageFeed()
-        let expiredTimeStamp = Date().minusFeedCacheMaxAge().adding(days: -1)
+        let expiredTimeStamp = Date().minusFeedCacheMaxAge().adding(seconds: -1)
         let fixedCurrentDate = Date()
 
         let (sut, store) = makeSUT(currentDate: {fixedCurrentDate})
