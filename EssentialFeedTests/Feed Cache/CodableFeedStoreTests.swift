@@ -12,7 +12,7 @@ import EssentialFeed
 class CodableFeedStore {
     
     private struct Cache : Codable {
-        let feed : [CodabaleFeedImage]
+        let feed : [CodableFeedImage]
         let timeStamp : Date
         
         var localFeed : [LocalFeedImage] {
@@ -20,7 +20,7 @@ class CodableFeedStore {
         }
     }
     
-    private struct CodabaleFeedImage : Equatable , Codable {
+    private struct CodableFeedImage : Equatable , Codable {
         private let id : UUID
         private let description : String?
         private let location : String?
@@ -56,7 +56,7 @@ class CodableFeedStore {
     
     func insert(_ items : [LocalFeedImage], timeStamp : Date, completion : @escaping FeedStore.InsertionCompletion){
         let encoder = JSONEncoder()
-        let cache = Cache(feed: items.map{ CodabaleFeedImage.init($0)}, timeStamp: timeStamp)
+        let cache = Cache(feed: items.map{ CodableFeedImage.init($0)}, timeStamp: timeStamp)
         let encoded = try! encoder.encode(cache)
         try! encoded.write(to: storeURL)
         completion(nil)
@@ -65,7 +65,7 @@ class CodableFeedStore {
 
 class CodableFeedStoreTests : XCTestCase {
     
-    
+
     override class func setUp() {
         super.setUp()
         let storeURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("image-feed.store")
@@ -146,8 +146,9 @@ class CodableFeedStoreTests : XCTestCase {
     
     
     //MARK: HELPER
-    
-    func makeSUT()-> CodableFeedStore {
-        return CodableFeedStore()
+    func makeSUT(file: StaticString = #filePath, line: UInt = #line)-> CodableFeedStore {
+        let sut = CodableFeedStore()
+        trackForMemoryLeak(sut, file: file, line: line)
+        return sut
     }
 }
