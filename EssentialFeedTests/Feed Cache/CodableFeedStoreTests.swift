@@ -117,8 +117,8 @@ class CodableFeedStoreTests : XCTestCase {
     
     
     func test_delete_deliversErrorOnDeletionError(){
-        let invalidStoreURL = URL(string: "invalid://store-url")!
-        let sut = makeSUT(storeURL : invalidStoreURL)
+        let nonDeletionPermissionUrl = cachesDirectory()
+        let sut = makeSUT(storeURL : nonDeletionPermissionUrl)
         
         let deletionError = deleteCache(from: sut)
         XCTAssertNotNil(deletionError, "Expected deletion error")
@@ -201,5 +201,9 @@ class CodableFeedStoreTests : XCTestCase {
     
     private func deleteStoreArtifacts(){
         try? FileManager.default.removeItem(at: testSpecificStoreURL())
+    }
+    
+    private func cachesDirectory() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 }
