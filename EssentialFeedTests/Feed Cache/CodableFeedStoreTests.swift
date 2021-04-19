@@ -175,11 +175,7 @@ class CodableFeedStoreTests : XCTestCase {
     
     func test_delete_hasNoSideEffectOnEmptyCache(){
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for deletion to complete")
-        sut.deleteCachedFeed {_ in
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        deleteCache(from: sut)
         expect(sut, toRetrieve: .empty)
     }
     
@@ -190,13 +186,7 @@ class CodableFeedStoreTests : XCTestCase {
         
         insert((feeds, timeStamp), to: sut)
         
-        var deletionError : Error?
-        let exp = expectation(description: "Wait for deletion to complete")
-        sut.deleteCachedFeed {error in
-            deletionError = error
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        let deletionError = deleteCache(from: sut)
         XCTAssertNil(deletionError, "Expected deletion to complete successfully")
         
         expect(sut, toRetrieve: .empty)
@@ -207,13 +197,7 @@ class CodableFeedStoreTests : XCTestCase {
         let invalidStoreURL = URL(string: "invalid://store-url")!
         let sut = makeSUT(storeURL : invalidStoreURL)
         
-        var deletionError : Error?
-        let exp = expectation(description: "Wait for deletion to complete")
-        sut.deleteCachedFeed {error in
-            deletionError = error
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        let deletionError = deleteCache(from: sut)
         XCTAssertNotNil(deletionError, "Expected deletion error")
     }
     
@@ -237,6 +221,18 @@ class CodableFeedStoreTests : XCTestCase {
         }
         wait(for: [exp], timeout: 1.0)
         return error
+    }
+    
+    @discardableResult
+    func deleteCache(from sut : CodableFeedStore,file : StaticString = #filePath, line : UInt = #line) -> Error? {
+        var deletionError : Error?
+        let exp = expectation(description: "Wait for deletion to complete")
+        sut.deleteCachedFeed {error in
+            deletionError = error
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+        return deletionError
     }
 
     
