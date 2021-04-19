@@ -181,10 +181,7 @@ class CodableFeedStoreTests : XCTestCase {
     
     func test_delete_emptiesPreviouslyInsertedCache(){
         let sut = makeSUT()
-        let feeds = uniqueImageFeed().local
-        let timeStamp = Date()
-        
-        insert((feeds, timeStamp), to: sut)
+        insert((uniqueImageFeed().local, Date()), to: sut)
         
         let deletionError = deleteCache(from: sut)
         XCTAssertNil(deletionError, "Expected deletion to complete successfully")
