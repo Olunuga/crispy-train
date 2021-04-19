@@ -9,82 +9,8 @@ import XCTest
 import EssentialFeed
 
 
-class CodableFeedStore : FeedStore {
-    private let storeURL : URL
-    init(storeURL : URL) {
-        self.storeURL = storeURL
-    }
-    
-    private struct Cache : Codable {
-        let feed : [CodableFeedImage]
-        let timeStamp : Date
-        
-        var localFeed : [LocalFeedImage] {
-            return feed.map{ $0.local }
-        }
-    }
-    
-    private struct CodableFeedImage : Equatable , Codable {
-        private let id : UUID
-        private let description : String?
-        private let location : String?
-        private let url : URL
-        
-        init(_ image : LocalFeedImage){
-            self.id = image.id
-            self.description = image.description
-            self.location = image.location
-            self.url = image.url
-        }
-        
-        var local : LocalFeedImage {
-            LocalFeedImage(id: id, description: description, location: location, url: url)
-        }
-    }
-    
-    
-    func retrieve(completion : @escaping RetrievalCompletion){
-        guard let data = try? Data(contentsOf: storeURL) else {
-            completion(.empty)
-            return
-        }
-        do{
-            let decoder = JSONDecoder()
-            let cache = try decoder.decode(Cache.self, from: data)
-            completion(.found(feed: cache.localFeed, timeStamp: cache.timeStamp))
-            
-        }catch {
-            completion(.failure(error))
-        }
-    }
-    
-    
-    
-    func insert(_ items : [LocalFeedImage], timeStamp : Date, completion : @escaping InsertionCompletion){
-        
-        do {
-            let encoder = JSONEncoder()
-            let cache = Cache(feed: items.map{ CodableFeedImage.init($0)}, timeStamp: timeStamp)
-            let encoded = try encoder.encode(cache)
-            try encoded.write(to: storeURL)
-            completion(nil)
-        } catch {
-            completion(error)
-        }
-    }
-    
-    func deleteCachedFeed(completion :@escaping DeletionCompletion){
-        do {
-            try FileManager.default.removeItem(at: storeURL)
-            completion(nil)
-        }catch {
-            completion(error)
-        }
-    }
-}
 
 class CodableFeedStoreTests : XCTestCase {
-    
     
     override func setUp() {
         super.setUp()

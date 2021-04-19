@@ -33,6 +33,7 @@
 		0AF0FE63262B2F78006A93A0 /* SharedTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE62262B2F78006A93A0 /* SharedTestHelpers.swift */; };
 		0AF0FE6B262C1EF6006A93A0 /* FeedCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE6A262C1EF5006A93A0 /* FeedCachePolicy.swift */; };
 		0AF0FE70262C56D9006A93A0 /* CodableFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE6F262C56D8006A93A0 /* CodableFeedStoreTests.swift */; };
+		0AF0FE75262D5924006A93A0 /* CodableFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE74262D5923006A93A0 /* CodableFeedStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 		0AF0FE62262B2F78006A93A0 /* SharedTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTestHelpers.swift; sourceTree = "<group>"; };
 		0AF0FE6A262C1EF5006A93A0 /* FeedCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCachePolicy.swift; sourceTree = "<group>"; };
 		0AF0FE6F262C56D8006A93A0 /* CodableFeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFeedStoreTests.swift; sourceTree = "<group>"; };
+		0AF0FE74262D5923006A93A0 /* CodableFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFeedStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				0A92DE592628C04B004BE304 /* FeedStore.swift */,
 				0A92DE63262951C6004BE304 /* LocalFeedImage.swift */,
 				0AF0FE6A262C1EF5006A93A0 /* FeedCachePolicy.swift */,
+				0AF0FE74262D5923006A93A0 /* CodableFeedStore.swift */,
 			);
 			path = "Feed Cache";
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				0A92DE64262951C6004BE304 /* LocalFeedImage.swift in Sources */,
 				0A92DE5A2628C04B004BE304 /* FeedStore.swift in Sources */,
 				0A92DE522628BF02004BE304 /* LocalFeedLoader.swift in Sources */,
+				0AF0FE75262D5924006A93A0 /* CodableFeedStore.swift in Sources */,
 				0A74F2F426143C9A009B6555 /* HTTPClient.swift in Sources */,
 				0A6229A326129BFC00A6915B /* FeedLoader.swift in Sources */,
 				0A8EC51C2616991700CEB3FF /* URLSessionHTTPClient.swift in Sources */,
