@@ -95,12 +95,7 @@ class CodableFeedStoreTests : XCTestCase {
         let feeds = uniqueImageFeed().local
         let timeStamp = Date()
         
-        let exp = expectation(description: "Wait for retrieve to complete")
-        sut.insert(feeds, timeStamp: timeStamp){ insertionError in
-            XCTAssertNil(insertionError, "Expect insertion error to be nil")
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        insert((feeds, timeStamp), to: sut)
         
         expect(sut, toRetrieve: .found(feed: feeds, timeStamp: timeStamp))
     }
@@ -111,13 +106,7 @@ class CodableFeedStoreTests : XCTestCase {
         let feeds = uniqueImageFeed().local
         let timeStamp = Date()
         
-        let exp = expectation(description: "Wait for cache insertion")
-        sut.insert(feeds, timeStamp: timeStamp){ insertionError in
-            XCTAssertNil(insertionError, "Expect insertion error to be nil")
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
+        insert((feeds, timeStamp), to: sut)
         
         expect(sut, toRetrieveTwice: .found(feed: feeds, timeStamp: timeStamp))
     }
@@ -129,6 +118,15 @@ class CodableFeedStoreTests : XCTestCase {
         let sut = CodableFeedStore(storeURL: testSpecificStoreURL())
         trackForMemoryLeak(sut, file: file, line: line)
         return sut
+    }
+    
+    func insert(_ cache : (feed : [LocalFeedImage], timestamp : Date), to sut : CodableFeedStore){
+        let exp = expectation(description: "Wait for retrieve to complete")
+        sut.insert(cache.feed, timeStamp: cache.timestamp){ insertionError in
+            XCTAssertNil(insertionError, "Expect insertion error to be nil")
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
     }
     
     func expect(_ sut : CodableFeedStore, toRetrieve expectedResult : RetrievedCachedFeedResult, file : StaticString = #filePath, line : UInt = #line){
