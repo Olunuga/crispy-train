@@ -48,10 +48,14 @@ class CodableFeedStore {
             completion(.empty)
             return
         }
-        
-        let decoder = JSONDecoder()
-        let cache = try! decoder.decode(Cache.self, from: data)
-        completion(.found(feed: cache.localFeed, timeStamp: cache.timeStamp))
+        do{
+            let decoder = JSONDecoder()
+            let cache = try decoder.decode(Cache.self, from: data)
+            completion(.found(feed: cache.localFeed, timeStamp: cache.timeStamp))
+            
+        }catch {
+            completion(.failure(error))
+        }
     }
     
     
@@ -111,6 +115,14 @@ class CodableFeedStoreTests : XCTestCase {
         expect(sut, toRetrieveTwice: .found(feed: feeds, timeStamp: timeStamp))
     }
     
+    func test_retrieve_deliversFailureOnRetrievalError(){
+        let sut = makeSUT()
+        
+        try! "invalid data".write(to: testSpecificStoreURL(), atomically: false, encoding: .utf8)
+        
+        expect(sut, toRetrieve: .failure(anyNSError()))
+    }
+    
     
     
     //MARK: HELPER
@@ -131,19 +143,20 @@ class CodableFeedStoreTests : XCTestCase {
     
     func expect(_ sut : CodableFeedStore, toRetrieve expectedResult : RetrievedCachedFeedResult, file : StaticString = #filePath, line : UInt = #line){
         let exp = expectation(description: "Wait for retrieve to complete")
-       
-            sut.retrieve { retrievedResult in
-                switch (retrievedResult, expectedResult) {
-                case (.empty, .empty):
-                    break
-                case let (.found(retrievedFeed, retrievedTimeStamp), .found(expectedFeed, expectedTimeStamp)):
-                    XCTAssertEqual(retrievedFeed, expectedFeed, file : file, line : line)
-                    XCTAssertEqual(retrievedTimeStamp, expectedTimeStamp, file : file, line : line)
-                default:
-                    XCTFail("Expected to retrieve \(expectedResult), got \(retrievedResult) instead", file : file, line : line)
-                }
-                
-                exp.fulfill()
+        
+        sut.retrieve { retrievedResult in
+            switch (retrievedResult, expectedResult) {
+            case (.empty, .empty),
+                 (.failure, .failure):
+                break
+            case let (.found(retrievedFeed, retrievedTimeStamp), .found(expectedFeed, expectedTimeStamp)):
+                XCTAssertEqual(retrievedFeed, expectedFeed, file : file, line : line)
+                XCTAssertEqual(retrievedTimeStamp, expectedTimeStamp, file : file, line : line)
+            default:
+                XCTFail("Expected to retrieve \(expectedResult), got \(retrievedResult) instead", file : file, line : line)
+            }
+            
+            exp.fulfill()
         }
         
         wait(for: [exp], timeout: 1.0)
