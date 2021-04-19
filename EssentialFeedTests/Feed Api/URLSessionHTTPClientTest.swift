@@ -107,9 +107,6 @@ class URLSessionHTTPClientTest : XCTestCase {
         XCTAssertEqual(receivedError.code, expectedError.code, file: file, line: line)
     }
     
-    private func anyURL() -> URL {URL(string: "http://any-url.com")!}
-    
-    private func anyNSError()-> NSError {NSError(domain: "Any error", code: NSURLErrorUnknown, userInfo: ["":""])}
     
     private func anyData() -> Data {Data("any data".utf8)}
     
