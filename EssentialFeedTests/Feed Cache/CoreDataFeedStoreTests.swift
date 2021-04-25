@@ -5,12 +5,31 @@
 //  Created by Mayowa Olunuga on 25/04/2021.
 //
 
-import Foundation
 import XCTest
+import EssentialFeed
 
-class CoreDataFeedStoreTests : XCTestCase,  FeedStoreSpecs {
-    func test_retrieve_deliversEmptyOnEmptyCache() {
+
+
+public final class CoreDataFeedStore : FeedStore {
+    public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         
+    }
+    
+    public func insert(_ items: [LocalFeedImage], timeStamp: Date, completion: @escaping InsertionCompletion) {
+        
+    }
+    
+    public func retrieve(completion: @escaping RetrievalCompletion) {
+        completion(.empty)
+    }
+    
+    
+}
+
+class CoreDataFeedStoreTests : XCTestCase, FeedStoreSpecs {
+    func test_retrieve_deliversEmptyOnEmptyCache() {
+       let sut = makeSUT()
+       assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
     }
     
     func test_retrieve_hasNoSideEffectOnEmptyCache() {
@@ -57,5 +76,14 @@ class CoreDataFeedStoreTests : XCTestCase,  FeedStoreSpecs {
         
     }
     
+    
+    //MARK: HELPER
+    
+    func makeSUT()-> FeedStore {
+        let sut = CoreDataFeedStore()
+        trackForMemoryLeak(sut)
+        return sut
+    }
+
     
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol FeedStoreSpecs {
+public protocol FeedStoreSpecs {
      func test_retrieve_deliversEmptyOnEmptyCache()
      func test_retrieve_hasNoSideEffectOnEmptyCache()
      func test_retrieve_deliversFoundValuesOnNonEmptyCache()
