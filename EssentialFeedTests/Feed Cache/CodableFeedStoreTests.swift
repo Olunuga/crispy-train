@@ -81,21 +81,13 @@ class CodableFeedStoreTests : XCTestCase, FeedStoreSpecs, FailableFeedStoreSpecs
     func test_insert_deliversErrorOnInsertionError(){
         let invalidStoreURL = URL(string: "invalid://store-url")!
         let sut = makeSUT(storeURL : invalidStoreURL)
-        let feeds = uniqueImageFeed().local
-        let timeStamp = Date()
-        
-        let insertionError = insert((feeds, timeStamp), to: sut)
-        XCTAssertNotNil(insertionError)
+        assertThatInsertDeliversErrorOnInsertionError(on: sut)
     }
     
     func test_insert_hasNoSideEffectInsertionError(){
         let invalidStoreURL = URL(string: "invalid://store-url")!
         let sut = makeSUT(storeURL : invalidStoreURL)
-        let feeds = uniqueImageFeed().local
-        let timeStamp = Date()
-        
-        insert((feeds, timeStamp), to: sut)
-        expect(sut, toRetrieve: .empty)
+       assertThatInsertHasNoSideEffectsOnInsertionError(on: sut)
     }
     
     
