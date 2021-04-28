@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-internal class FeedStoreSpy : FeedStore {
+ class FeedStoreSpy : FeedStore {
     private var deletionCompletions = [DeletionCompletion]()
     private var insertionCompletions = [InsertionCompletion]()
     private var retrievalCompletions = [RetrievalCompletion]()

@@ -9,36 +9,7 @@ import XCTest
 import EssentialFeed
 import CoreData
 
-private class ManagedCache : NSManagedObject {
-    @NSManaged var timestamp : Date
-    @NSManaged var feeds : NSOrderedSet
-}
 
-private class ManagedFeedImage : NSManagedObject {
-    @NSManaged var id : UUID
-    @NSManaged var imageDescription : String?
-    @NSManaged var location : String?
-    @NSManaged var url : URL
-    @NSManaged var cache : ManagedCache
-}
-
-public final class CoreDataFeedStore : FeedStore {
-    
-    
-    public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        
-    }
-    
-    public func insert(_ items: [LocalFeedImage], timeStamp: Date, completion: @escaping InsertionCompletion) {
-        
-    }
-    
-    public func retrieve(completion: @escaping RetrievalCompletion) {
-        completion(.empty)
-    }
-    
-    
-}
 
 class CoreDataFeedStoreTests : XCTestCase, FeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() {
@@ -53,7 +24,7 @@ class CoreDataFeedStoreTests : XCTestCase, FeedStoreSpecs {
     
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
         //let sut = makeSUT()
-       // assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
+        //assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
     }
     
     func test_retrieve_hasNoSideEffectOnNonEmptyCache() {
@@ -96,7 +67,8 @@ class CoreDataFeedStoreTests : XCTestCase, FeedStoreSpecs {
     //MARK: HELPER
     
     func makeSUT()-> FeedStore {
-        let sut = CoreDataFeedStore()
+        let bundle = Bundle(for: CoreDataFeedStore.self)
+        let sut = try! CoreDataFeedStore(bundle: bundle)
         trackForMemoryLeak(sut)
         return sut
     }
