@@ -7,21 +7,6 @@
 
 import CoreData
 
-@objc(ManagedCache)
-private class ManagedCache : NSManagedObject {
-    @NSManaged var timestamp : Date
-    @NSManaged var feeds : NSSet
-}
-
-@objc(ManagedFeedImage)
-private class ManagedFeedImage : NSManagedObject {
-    @NSManaged var id : UUID
-    @NSManaged var imageDescription : String?
-    @NSManaged var location : String?
-    @NSManaged var url : URL
-    @NSManaged var cache : ManagedCache
-}
-
 public final class CoreDataFeedStore : FeedStore {
     private let container : NSPersistentContainer
     private let context : NSManagedObjectContext
@@ -42,15 +27,7 @@ public final class CoreDataFeedStore : FeedStore {
             do {
                 let managedCache = ManagedCache(context: context)
                 managedCache.timestamp = timeStamp
-                managedCache.feeds = NSSet(array: items.map { local in
-                    let managed = ManagedFeedImage(context: context)
-                    managed.id = local.id
-                    managed.imageDescription = local.description
-                    managed.location = local.location
-                    managed.url = local.url
-                    return managed
-                })
-                
+                managedCache.feeds = ManagedFeedImage.images(from: items, in: context)
                try context.save()
                 completion(nil)
             } catch {
@@ -66,7 +43,7 @@ public final class CoreDataFeedStore : FeedStore {
                 let request = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
                 request.returnsObjectsAsFaults = false
                 if let cache = try context.fetch(request).first {
-                    completion(.found(feed: cache.feeds.compactMap{ ($0 as? ManagedFeedImage)}.map{ LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)}, timeStamp: cache.timestamp))
+                    completion(.found(feed: cache.localFeed, timeStamp: cache.timestamp))
                 }else {
                     completion(.empty)
                 }
@@ -105,5 +82,43 @@ extension NSPersistentContainer {
 extension NSManagedObjectModel {
     static func with(name : String, in bundle :Bundle) -> NSManagedObjectModel? {
         return bundle.url(forResource: name, withExtension: "momd").flatMap{NSManagedObjectModel(contentsOf: $0)}
+    }
+}
+
+
+@objc(ManagedCache)
+private class ManagedCache : NSManagedObject {
+    @NSManaged var timestamp : Date
+    @NSManaged var feeds : NSOrderedSet
+    
+    var localFeed : [LocalFeedImage] {
+        return feeds.compactMap {($0 as? ManagedFeedImage)?.local}
+    }
+    
+}
+
+@objc(ManagedFeedImage)
+private class ManagedFeedImage : NSManagedObject {
+    @NSManaged var id : UUID
+    @NSManaged var imageDescription : String?
+    @NSManaged var location : String?
+    @NSManaged var url : URL
+    @NSManaged var cache : ManagedCache
+    
+    
+    static func images(from localFeed : [LocalFeedImage], in context : NSManagedObjectContext) -> NSOrderedSet {
+        return NSOrderedSet( array: localFeed.map { local in
+            let managed = ManagedFeedImage(context: context)
+            managed.id = local.id
+            managed.imageDescription = local.description
+            managed.location = local.location
+            managed.url = local.url
+            return managed
+            
+        })
+    }
+    
+    var local : LocalFeedImage {
+        return LocalFeedImage(id: id, description: imageDescription, location: location, url: url)
     }
 }
