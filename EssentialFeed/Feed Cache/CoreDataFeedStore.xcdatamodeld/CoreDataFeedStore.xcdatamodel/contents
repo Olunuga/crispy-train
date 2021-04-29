@@ -7,12 +7,12 @@
     <entity name="ManagedFeedImage" representedClassName="ManagedFeedImage" syncable="YES">
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imageDescription" optional="YES" attributeType="String"/>
-        <attribute name="location" attributeType="String"/>
+        <attribute name="location" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="cache" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedCache" inverseName="feeds" inverseEntity="ManagedCache"/>
     </entity>
     <elements>
-        <element name="ManagedFeedImage" positionX="-268.85546875" positionY="4.27734375" width="128" height="118"/>
         <element name="ManagedCache" positionX="-54" positionY="-9" width="128" height="73"/>
+        <element name="ManagedFeedImage" positionX="-268.85546875" positionY="4.27734375" width="128" height="118"/>
     </elements>
 </model>

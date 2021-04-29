@@ -7,11 +7,13 @@
 
 import CoreData
 
+@objc(ManagedCache)
 private class ManagedCache : NSManagedObject {
     @NSManaged var timestamp : Date
-    @NSManaged var feeds : NSOrderedSet
+    @NSManaged var feeds : NSSet
 }
 
+@objc(ManagedFeedImage)
 private class ManagedFeedImage : NSManagedObject {
     @NSManaged var id : UUID
     @NSManaged var imageDescription : String?
@@ -34,11 +36,44 @@ public final class CoreDataFeedStore : FeedStore {
     }
     
     public func insert(_ items: [LocalFeedImage], timeStamp: Date, completion: @escaping InsertionCompletion) {
+        let context = self.context
         
+        context.perform {
+            do {
+                let managedCache = ManagedCache(context: context)
+                managedCache.timestamp = timeStamp
+                managedCache.feeds = NSSet(array: items.map { local in
+                    let managed = ManagedFeedImage(context: context)
+                    managed.id = local.id
+                    managed.imageDescription = local.description
+                    managed.location = local.location
+                    managed.url = local.url
+                    return managed
+                })
+                
+               try context.save()
+                completion(nil)
+            } catch {
+                completion(error)
+            }
+        }
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
-        completion(.empty)
+        let context = self.context
+        context.perform {
+            do {
+                let request = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
+                request.returnsObjectsAsFaults = false
+                if let cache = try context.fetch(request).first {
+                    completion(.found(feed: cache.feeds.compactMap{ ($0 as? ManagedFeedImage)}.map{ LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)}, timeStamp: cache.timestamp))
+                }else {
+                    completion(.empty)
+                }
+            }catch {
+                completion(.failure(error))
+            }
+        }
     }
 }
 
