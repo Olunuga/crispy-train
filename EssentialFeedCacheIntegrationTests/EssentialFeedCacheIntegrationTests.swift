@@ -33,12 +33,7 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
         let sutToPerformLoad = makeSUT()
         let feed = uniqueImageFeed().model
         
-        let saveExp = expectation(description: "Wait for save completion")
-        sutToPerformSave.save(feed){ saveError in
-            XCTAssertNil(saveError, "Expected to save feed successfully")
-            saveExp.fulfill()
-        }
-        wait(for: [saveExp], timeout: 1.0)
+        save(feed: feed, with: sutToPerformSave)
         expect(sutToPerformLoad, toLoad: feed)
         
     }
@@ -51,20 +46,8 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
         let lastFeed = uniqueImageFeed().model
         
         
-        let saveExp1 = expectation(description: "Wait for save completion")
-        sutToPerformFirstSave.save(firstFeed){ saveError in
-            XCTAssertNil(saveError, "Expected to save feed successfully")
-            saveExp1.fulfill()
-        }
-        wait(for: [saveExp1], timeout: 1.0)
-        
-        let saveExp2 = expectation(description: "Wait for save completion")
-        sutToPerformLastSave.save(lastFeed){ saveError in
-            XCTAssertNil(saveError, "Expected to save feed successfully")
-            saveExp2.fulfill()
-        }
-        wait(for: [saveExp2], timeout: 1.0)
-        
+        save(feed: firstFeed, with: sutToPerformFirstSave)
+        save(feed: lastFeed, with: sutToPerformLastSave)
         expect(sutToPerformLoad, toLoad: lastFeed)
     }
     
@@ -95,6 +78,16 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    
+    func save(feed : [FeedImage], with sut : LocalFeedLoader, file : StaticString = #filePath, line : UInt = #line){
+        let saveExp = expectation(description: "Wait for save completion")
+        sut.save(feed){ saveError in
+            XCTAssertNil(saveError, "Expected to save feed successfully", file: file, line: line)
+            saveExp.fulfill()
+        }
+        wait(for: [saveExp], timeout: 1.0)
     }
     
     func testSpecificStoreURL() -> URL {
