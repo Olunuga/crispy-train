@@ -187,7 +187,7 @@ class LoadFeedFromRemoteUseCaseTests : XCTestCase {
     }
     
     
-    typealias completionType = (HttpClientResult)->Void
+    typealias completionType = (HttpClient.Result)->Void
     class HTTPClientSpy : HttpClient {
         private var messages = [(url : URL, completion : completionType)]()
         var requestedUrls : [URL] {
@@ -204,7 +204,7 @@ class LoadFeedFromRemoteUseCaseTests : XCTestCase {
         
         func complete(withStatusCode code : Int,data : Data, at index : Int = 0){
             let result = HTTPURLResponse(url: requestedUrls[index], statusCode: code, httpVersion: nil, headerFields: nil)!
-            messages[index].completion(.success(data ,result))
+            messages[index].completion(.success((data, result)))
         }
         
         
