@@ -58,10 +58,10 @@ import EssentialFeed
     }
     
     func completeRetrievalWithAnEmptyCache(at index: Int = 0){
-        retrievalCompletions[index](.empty)
+        retrievalCompletions[index](.success(.empty))
     }
     
     func completeRetrieval(with feed : [LocalFeedImage], timeStamp : Date, at index : Int = 0){
-        retrievalCompletions[index](.found(feed :feed, timeStamp: timeStamp))
+        retrievalCompletions[index](.success(.found(feed :feed, timeStamp: timeStamp)))
     }
 }
