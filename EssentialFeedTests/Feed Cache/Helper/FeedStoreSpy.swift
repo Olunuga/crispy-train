@@ -8,7 +8,7 @@
 import Foundation
 import EssentialFeed
 
-internal class FeedStoreSpy : FeedStore {
+ class FeedStoreSpy : FeedStore {
     private var deletionCompletions = [DeletionCompletion]()
     private var insertionCompletions = [InsertionCompletion]()
     private var retrievalCompletions = [RetrievalCompletion]()
@@ -38,19 +38,19 @@ internal class FeedStoreSpy : FeedStore {
     }
     
     func completeDeletionWith(with error : NSError, at index : Int = 0){
-        deletionCompletions[index](error)
+        deletionCompletions[index](.failure(error))
     }
     
     func completeInsertionWith(with error : NSError, at index : Int = 0){
-        insertionCompletions[index](error)
+        insertionCompletions[index](.failure(error))
     }
     
     func completeDeletionSuccessfully(at index : Int = 0){
-        deletionCompletions[index](nil)
+        deletionCompletions[index](.success(()))
     }
     
     func completeInsertionSuccessfully(at index:  Int = 0){
-        insertionCompletions[index](nil)
+        insertionCompletions[index](.success(()))
     }
     
     func completeRetrieval(with error : NSError, at index : Int = 0){
@@ -58,10 +58,10 @@ internal class FeedStoreSpy : FeedStore {
     }
     
     func completeRetrievalWithAnEmptyCache(at index: Int = 0){
-        retrievalCompletions[index](.empty)
+        retrievalCompletions[index](.success(.none))
     }
     
     func completeRetrieval(with feed : [LocalFeedImage], timeStamp : Date, at index : Int = 0){
-        retrievalCompletions[index](.found(feed :feed, timeStamp: timeStamp))
+        retrievalCompletions[index](.success(CachedFeed(feed :feed, timeStamp: timeStamp)))
     }
 }
