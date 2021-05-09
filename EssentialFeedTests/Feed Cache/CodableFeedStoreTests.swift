@@ -144,6 +144,7 @@ class CodableFeedStoreTests : XCTestCase, FeedStoreSpecs, FailableFeedStoreSpecs
     
     private func setupEmptyStoreState(){
         deleteStoreArtifacts()
+        createCachesDirectory()
     }
     
     private func undoSideEffects(){
@@ -155,6 +156,15 @@ class CodableFeedStoreTests : XCTestCase, FeedStoreSpecs, FailableFeedStoreSpecs
     }
     
     private func cachesDirectory() -> URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.urls(for: .cachesDirectory, in: .systemDomainMask).first!
+    }
+    
+    private func createCachesDirectory() {
+        try? FileManager
+            .default
+            .createDirectory(
+                atPath: cachesDirectory().path,
+                withIntermediateDirectories: true,
+                attributes: nil)
     }
 }
