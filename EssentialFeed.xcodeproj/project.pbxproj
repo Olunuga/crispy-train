@@ -44,6 +44,7 @@
 		0AB110D0261D7417004DFCEE /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A62297F26129B4600A6915B /* EssentialFeed.framework */; };
 		0AB110D9261D83C0004DFCEE /* XCTTestCase+MemoryLeakTrackingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8EC515261681F900CEB3FF /* XCTTestCase+MemoryLeakTrackingHelper.swift */; };
 		0AB3BFE62649152B00359FFC /* FeedViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB3BFE42649152B00359FFC /* FeedViewControllerTests.swift */; };
+		0AB3C00826491D1700359FFC /* XCTTestCase+MemoryLeakTrackingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8EC515261681F900CEB3FF /* XCTTestCase+MemoryLeakTrackingHelper.swift */; };
 		0AF0FE4B262A0597006A93A0 /* LoadFeedFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE4A262A0597006A93A0 /* LoadFeedFromCacheUseCaseTests.swift */; };
 		0AF0FE51262A06EF006A93A0 /* FeedStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE50262A06EF006A93A0 /* FeedStoreSpy.swift */; };
 		0AF0FE59262B2A50006A93A0 /* ValidateFeedCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF0FE58262B2A4F006A93A0 /* ValidateFeedCacheUseCaseTests.swift */; };
@@ -627,6 +628,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AB3C00826491D1700359FFC /* XCTTestCase+MemoryLeakTrackingHelper.swift in Sources */,
 				0AB3BFE62649152B00359FFC /* FeedViewControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -746,6 +748,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -774,6 +777,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
