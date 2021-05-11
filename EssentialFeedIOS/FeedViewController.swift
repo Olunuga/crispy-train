@@ -8,7 +8,6 @@
 import UIKit
 import EssentialFeed
 
-
 public protocol FeedImageDataLoaderTask {
     func cancel()
 }
@@ -32,18 +31,15 @@ final public class FeedViewController : UITableViewController, UITableViewDataSo
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
         tableView.prefetchDataSource = self
         load()
-        
     }
     
     @objc private func load(){
         refreshControl?.beginRefreshing()
         feedLoader?.load {[weak self]  result in
-            
             if let feed = try? result.get() {
                 self?.tableModel = feed
                 self?.tableView.reloadData()
@@ -78,25 +74,28 @@ final public class FeedViewController : UITableViewController, UITableViewDataSo
                 cell?.feedImageContainer.stopShimmering()
             }
         }
-        
         cell.onRetry = loadImage
         loadImage()
-            
         return cell
     }
     
-    
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        tasks[indexPath]?.cancel()
-        tasks[indexPath] = nil
+        cancelTaskFor(rowAt: indexPath)
     }
     
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach{ indexPath in
             let cellModel = tableModel[indexPath.row]
-            _ = imageLoader?.loadImageData(from: cellModel.url){_ in }
+            tasks[indexPath] = imageLoader?.loadImageData(from: cellModel.url){_ in }
         }
-       
     }
     
+    public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach{ indexPath in cancelTaskFor(rowAt: indexPath) }
+    }
+    
+    func cancelTaskFor(rowAt indexPath : IndexPath){
+        tasks[indexPath]?.cancel()
+        tasks[indexPath] = nil
+    }
 }
