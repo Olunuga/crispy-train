@@ -50,7 +50,7 @@ public final class FeedImageCellController {
     }
     
     
-    deinit {
+    func cancelLoad() {
         task?.cancel()
     }
 }
