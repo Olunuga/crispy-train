@@ -15,7 +15,7 @@ extension FeedViewController {
     }
     
     func simulateFeedImageViewNotNearVisible(at row : Int){
-        simulateFeedImageViewVisible(at: row)
+        simulateFeedImageNearVisible(at: row)
         
         let ds = tableView.prefetchDataSource
         let index = IndexPath(row: row, section: feedImageSection)
