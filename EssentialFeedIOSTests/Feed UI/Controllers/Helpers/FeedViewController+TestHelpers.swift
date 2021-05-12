@@ -28,7 +28,7 @@ extension FeedViewController {
         ds?.tableView(tableView, prefetchRowsAt: [index])
     }
     
-    func simulateFeedImageNotViewVisible(at row: Int){
+    func simulateFeedImageViewNotVisible(at row: Int){
         let view = simulateFeedImageViewVisible(at: row)
         
         let delegate = tableView.delegate
