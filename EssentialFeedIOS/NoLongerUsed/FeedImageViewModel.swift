@@ -7,7 +7,7 @@
 
 import EssentialFeed
 
-final public class FeedImageViewModel<Image> {
+private final class FeedImageViewModel<Image> {
     typealias Observable<T> = (T)->Void
     
     private var task : FeedImageDataLoaderTask?
