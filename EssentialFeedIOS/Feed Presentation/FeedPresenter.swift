@@ -13,7 +13,7 @@ protocol FeedView {
     func display(feed : [FeedImage])
 }
 
-protocol FeedLoadingView : class {
+protocol FeedLoadingView {
     func display(isLoading : Bool)
 }
 
@@ -21,7 +21,7 @@ final class FeedPresenter {
     private var feedLoader : FeedLoader
     
     var feedView : FeedView?
-    weak var loadingView : FeedLoadingView?
+    var loadingView : FeedLoadingView?
     
     init(feedLoader : FeedLoader) {
         self.feedLoader = feedLoader
