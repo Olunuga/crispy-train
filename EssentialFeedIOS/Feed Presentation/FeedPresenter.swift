@@ -29,20 +29,25 @@ struct FeedViewData {
 
 
 final class FeedPresenter {
-    var feedView : FeedView?
-    var loadingView : FeedLoadingView?
+    private let feedView : FeedView
+    private let loadingView : FeedLoadingView
+    
+    init(feedView : FeedView, loadingView :FeedLoadingView) {
+        self.feedView = feedView
+        self.loadingView = loadingView
+    }
     
     func didStartLoadingFeed(){
-        loadingView?.display(FeedLoadingViewData(isLoading : true))
+        loadingView.display(FeedLoadingViewData(isLoading : true))
     }
     
     func didFinishLoadingFeed(with feed : [FeedImage]){
-        loadingView?.display(FeedLoadingViewData(isLoading : false))
-        feedView?.display(FeedViewData(feed : feed))
+        loadingView.display(FeedLoadingViewData(isLoading : false))
+        feedView.display(FeedViewData(feed : feed))
     }
     
     func didFinishLoading(with error : Error){
-        loadingView?.display(FeedLoadingViewData(isLoading : false))
+        loadingView.display(FeedLoadingViewData(isLoading : false))
     }
     
 }

@@ -13,12 +13,11 @@ public final class FeedUIComposer{
     private init(){}
     
     public static func feedComposedWith(feedLoader : FeedLoader, imageLoader : FeedImageDataLoader) -> FeedViewController {
-        let presenter = FeedPresenter()
-        let presenterAdapter = FeedLoaderPresenterAdapter(feedPresenter: presenter, feedLoader: feedLoader)
+        let presenterAdapter = FeedLoaderPresenterAdapter(feedLoader: feedLoader)
         let refreshController = FeedRefreshViewController(delegate: presenterAdapter)
         let feedController = FeedViewController(refreshController: refreshController)
-        presenter.loadingView = WeakRefVirtualProxy(refreshController)
-        presenter.feedView = FeedViewImageLoaderAdapter(controller: feedController, loader: imageLoader)
+        let presenter = FeedPresenter(feedView: FeedViewImageLoaderAdapter(feedViewController: feedController, loader: imageLoader), loadingView: WeakRefVirtualProxy(refreshController))
+        presenterAdapter.feedPresenter = presenter
         return feedController
     }
     
@@ -49,16 +48,16 @@ extension WeakRefVirtualProxy : FeedLoadingView where T : FeedLoadingView {
 
 
 private final class FeedViewImageLoaderAdapter : FeedView {
-    private weak var controller : FeedViewController?
+    private weak var feedViewController : FeedViewController?
     private let loader : FeedImageDataLoader
     
-    init(controller : FeedViewController, loader : FeedImageDataLoader) {
-        self.controller = controller
+    init(feedViewController : FeedViewController, loader : FeedImageDataLoader) {
+        self.feedViewController = feedViewController
         self.loader = loader
     }
     
     func display(_ viewModel: FeedViewData) {
-        controller?.tableModel = viewModel.feed.map { model in
+        feedViewController?.tableModel = viewModel.feed.map { model in
             let feedImageViewModel = FeedImageViewModel(model: model, imageLoader: loader, imageTransformer: UIImage.init)
             return FeedImageCellController(viewModel: feedImageViewModel)
             
@@ -68,22 +67,21 @@ private final class FeedViewImageLoaderAdapter : FeedView {
 
 
 private final class FeedLoaderPresenterAdapter : FeedRefreshViewControllerDelegate {
-    private let feedPresenter : FeedPresenter
+    var feedPresenter : FeedPresenter?
     private let feedLoader : FeedLoader
     
-    init(feedPresenter : FeedPresenter, feedLoader : FeedLoader) {
-        self.feedPresenter = feedPresenter
+    init(feedLoader : FeedLoader) {
         self.feedLoader = feedLoader
     }
 
     func didRequestFeedRefresh() {
-        feedPresenter.didStartLoadingFeed()
+        feedPresenter?.didStartLoadingFeed()
         feedLoader.load{[weak self]  result in
             switch result {
             case let .success(feed):
-                self?.feedPresenter.didFinishLoadingFeed(with: feed)
+                self?.feedPresenter?.didFinishLoadingFeed(with: feed)
             case let .failure(error):
-                self?.feedPresenter.didFinishLoading(with: error)
+                self?.feedPresenter?.didFinishLoading(with: error)
             }
         }
     }
