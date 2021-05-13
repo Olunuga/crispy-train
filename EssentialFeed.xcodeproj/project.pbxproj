@@ -249,6 +249,7 @@
 		0A32B4EF2648628300A6E158 /* EssentialFeedIOS */ = {
 			isa = PBXGroup;
 			children = (
+				0ADB72FA264D5A0B00B8D2E8 /* NoLongerUsed */,
 				0A32B4F12648628300A6E158 /* Info.plist */,
 				0ADB72ED264D4E7C00B8D2E8 /* Feed Presentation */,
 				0AA85B4E264BCF0100DB0FC0 /* Feed UI */,
@@ -534,11 +535,18 @@
 		0ADB72ED264D4E7C00B8D2E8 /* Feed Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				0ADB72DF264C7D5F00B8D2E8 /* FeedViewModel.swift */,
 				0ADB72E6264C8ADE00B8D2E8 /* FeedImageViewModel.swift */,
 				0ADB72F3264D4FB000B8D2E8 /* FeedPresenter.swift */,
 			);
 			path = "Feed Presentation";
+			sourceTree = "<group>";
+		};
+		0ADB72FA264D5A0B00B8D2E8 /* NoLongerUsed */ = {
+			isa = PBXGroup;
+			children = (
+				0ADB72DF264C7D5F00B8D2E8 /* FeedViewModel.swift */,
+			);
+			path = NoLongerUsed;
 			sourceTree = "<group>";
 		};
 		0AF0FE4F262A06CF006A93A0 /* Helper */ = {

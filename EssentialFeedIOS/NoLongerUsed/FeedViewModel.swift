@@ -7,7 +7,7 @@
 
 import EssentialFeed
 
-final class FeedViewModel {
+private final class FeedViewModel {
     typealias Observable<T> = (T)->Void
     private var feedLoader : FeedLoader
     
